@@ -25,7 +25,15 @@ password: {
     default: "starter"
   },
   token: String,
-    avatarURL: String,
+  avatarURL: String,
+  verify: {
+    type: Boolean,
+    default: false,
+  },
+  verificationCode: {
+    type: String,
+    default: "",
+  },
 }, { versionKey: false, timestamps: true });
 
 userSchema.post("save", handleMongooseError);
@@ -36,14 +44,19 @@ const registerSchema = Joi.object({
     subscription: Joi.string().valid(...subscriptionList).default('starter'),
 });
 
+const emailSchema = Joi.object({
+  email: Joi.string().pattern(emailRegexp).required(),
+});
+
 const loginSchema = Joi.object({
     email: Joi.string().pattern(emailRegexp).required(),
     password: Joi.string().min(7).required(),
 });
 
 const schemas = {
-    registerSchema,
-    loginSchema,
+  registerSchema,
+  emailSchema,
+  loginSchema,
 };
 
 const User = model("user", userSchema);
